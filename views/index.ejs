@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atmospheric Generator Control</title>
+</head>
+<body>
+  <h1>Atmospheric Generator Control Panel</h1>
+  <form id="controlForm" action="/update" method="POST">
+    <label for="mode">Mode:</label>
+    <select name="mode" id="mode">
+      <option value="normal" <% if(data.mode === 'normal') { %>selected<% } %>>Normal</option>
+      <option value="auto" <% if(data.mode === 'auto') { %>selected<% } %>>Auto</option> 
+    </select><br><br>
+    <label for="on">Power:</label>
+    <input type="checkbox" name="on" id="on" <% if(data.on) { %>checked<% } %>><br><br>
+    <label for="waterPercentage">Water Percentage:</label>
+    <span id="waterPercentageDisplay"><%= data.waterPercentage %></span> %<br><br>
+  </form>
+
+  <script>
+    // Function to update the form data
+    function updateFormData() {
+      const mode = document.getElementById('mode').value;
+      const on = document.getElementById('on').checked;
+      
+      fetch('/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ mode, on })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => console.log('Data updated:', data))
+      .catch(error => console.error('Error updating data:', error));
+    }
+
+    // Event listeners to trigger updateFormData function on form element change
+    document.getElementById('mode').addEventListener('change', updateFormData);
+    document.getElementById('on').addEventListener('change', updateFormData);
+  </script>
+</body>
+</html>
